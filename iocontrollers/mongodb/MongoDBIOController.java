@@ -28,34 +28,33 @@ public class MongoDBIOController implements IOController {
     private AdminManager adminManager;
     private DBLock dbLock;
 
-    private void attemptAuthentication(){
+    public MongoDBIOController(){
+        adminManager = new MongoDBAdminManager();
+    }
+
+    @Override
+    public boolean attemptAuthenticate(String address, int port, String username, String password) {
         try {
-            Pair<String, String> credentialStrings = LoginDialog.showDialog();
-            if (credentialStrings == null){
-                return;
-            }
-            MongoCredential credential = MongoCredential.createCredential(credentialStrings.getKey(),
+            MongoCredential credential = MongoCredential.createCredential(username,
                     "UDT",
-                    credentialStrings.getValue().toCharArray());
-            mongoClient = new MongoClient(new ServerAddress(SettingsHandler.getSetting("mongod_ip"), Integer.parseInt(SettingsHandler.getSetting("mongod_port"))), credential, MongoClientOptions.builder().build());
+                    password.toCharArray());
+            mongoClient = new MongoClient(new ServerAddress(address,port), credential, MongoClientOptions.builder().build());
             // setup if the database authenticated properly
             componentIOManager = new MongoDBComponentIOManager(mongoClient);
             structureIOManager = new MongoDBStructureIOManager(mongoClient);
             overlayIOManager = new MongoDBOverlayIOManager(mongoClient);
             dbLock = new MongoDBLock(mongoClient);
+            return true;
         }catch (MongoSecurityException e){
             // -4 is error authenticating
             if (e.getCode()==-4){
                 new Alert(Alert.AlertType.ERROR, "Authentication failed!", ButtonType.OK).showAndWait();
-                attemptAuthentication();
+                return false;
             }else {
                 e.printStackTrace();
             }
         }
-    }
-    public MongoDBIOController(){
-        adminManager = new MongoDBAdminManager();
-        attemptAuthentication();
+        return false;
     }
 
     @Override
