@@ -11,10 +11,11 @@ import java.io.Closeable;
 
 public interface IOController extends Closeable, AutoCloseable {
     IOController ioController = new MongoDBIOController();
-
     static IOController getIoController(){
         return ioController;
     }
+
+    boolean attemptAuthenticate(String address, int port, String username, String password);
 
     ComponentIOManager getComponentIOManager();
     StructureIOManager getStructureIOManager();
