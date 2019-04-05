@@ -1,10 +1,6 @@
 package org.debatetool.io;
 
-import org.debatetool.gui.locationtree.LocationTreeItemContent;
-import javafx.scene.control.TreeItem;
-import javafx.util.Pair;
 
-import javax.annotation.Nonnull;
 import javax.imageio.IIOException;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -13,7 +9,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
-import java.util.List;
 
 public class IOUtil {
     /**
@@ -186,12 +181,4 @@ public class IOUtil {
         return Base64.getEncoder().encodeToString(src);
     }
 
-    public static boolean listContainsString(List<TreeItem<LocationTreeItemContent>> list, @Nonnull String name){
-        for (TreeItem<LocationTreeItemContent> treeItem: list){
-            if (name.equals(treeItem.getValue().toString())){
-                return true;
-            }
-        }
-        return false;
-    }
 }
