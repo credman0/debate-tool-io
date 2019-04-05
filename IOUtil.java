@@ -123,7 +123,7 @@ public class IOUtil {
         in.readFully(stringBytes);
         byte nullTerm = in.readByte();
         if (nullTerm!=0){
-            throw new IIOException("String missing null terminator");
+            throw new IllegalStateException("String missing null terminator");
         }
         String string = new String(stringBytes, StandardCharsets.UTF_8);
         return string;
