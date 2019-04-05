@@ -1,8 +1,6 @@
 package org.debatetool.io.iocontrollers.mongodb;
 
 import com.mongodb.*;
-import org.debatetool.gui.LoginDialog;
-import org.debatetool.gui.SettingsHandler;
 import org.debatetool.io.accounts.AdminManager;
 import org.debatetool.io.accounts.DBLock;
 import org.debatetool.io.accounts.mongodb.MongoDBAdminManager;
@@ -14,10 +12,6 @@ import org.debatetool.io.overlayio.OverlayIOManager;
 import org.debatetool.io.overlayio.mongodb.MongoDBOverlayIOManager;
 import org.debatetool.io.structureio.StructureIOManager;
 import org.debatetool.io.structureio.mongodb.MongoDBStructureIOManager;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.util.Pair;
-
 import java.io.IOException;
 
 public class MongoDBIOController implements IOController {
@@ -48,7 +42,6 @@ public class MongoDBIOController implements IOController {
         }catch (MongoSecurityException e){
             // -4 is error authenticating
             if (e.getCode()==-4){
-                new Alert(Alert.AlertType.ERROR, "Authentication failed!", ButtonType.OK).showAndWait();
                 return false;
             }else {
                 e.printStackTrace();

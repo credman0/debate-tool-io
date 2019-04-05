@@ -1,7 +1,6 @@
 package org.debatetool.io;
 
 
-import javax.imageio.IIOException;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.File;
@@ -45,18 +44,6 @@ public class IOUtil {
 
 
         return numBytes;
-    }
-
-    public static void deleteDir(File file) {
-        File[] contents = file.listFiles();
-        if (contents != null) {
-            for (File f : contents) {
-                if (!Files.isSymbolicLink(f.toPath())) {
-                    deleteDir(f);
-                }
-            }
-        }
-        file.delete();
     }
 
     /**
