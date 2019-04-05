@@ -186,36 +186,7 @@ public class IOUtil {
         return Base64.getEncoder().encodeToString(src);
     }
 
-    /**
-     * Find a name that is not in the list, by taking base and adding numbers until it is not contained
-     * @param base base name to append to
-     * @param list list to check against
-     * @return a name of the form <base>(\d)?
-     */
-    public static String getSafeNameAgainstList(String base, List<String> list){
-        String trialName = base;
-        int index = 1;
-        while (list.contains(trialName)){
-            trialName = base + " (" + index +")";
-            index++;
-        }
-        return trialName;
-    }
-
-    public static String getSafeNameAgainstTreeItemList(String base, List<TreeItem<LocationTreeItemContent>> list){
-        if (base==null){
-            return null;
-        }
-        String trialName = base;
-        int index = 1;
-        while (containsString(list,trialName)){
-            trialName = base + " (" + index +")";
-            index++;
-        }
-        return trialName;
-    }
-
-    private static boolean containsString(List<TreeItem<LocationTreeItemContent>> list, @Nonnull String name){
+    public static boolean listContainsString(List<TreeItem<LocationTreeItemContent>> list, @Nonnull String name){
         for (TreeItem<LocationTreeItemContent> treeItem: list){
             if (name.equals(treeItem.getValue().toString())){
                 return true;
