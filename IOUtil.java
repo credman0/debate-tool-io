@@ -1,10 +1,6 @@
 package org.debatetool.io;
 
-import org.debatetool.gui.locationtree.LocationTreeItemContent;
-import javafx.scene.control.TreeItem;
-import javafx.util.Pair;
 
-import javax.annotation.Nonnull;
 import javax.imageio.IIOException;
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -13,7 +9,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Base64;
-import java.util.List;
 
 public class IOUtil {
     /**
@@ -186,41 +181,4 @@ public class IOUtil {
         return Base64.getEncoder().encodeToString(src);
     }
 
-    /**
-     * Find a name that is not in the list, by taking base and adding numbers until it is not contained
-     * @param base base name to append to
-     * @param list list to check against
-     * @return a name of the form <base>(\d)?
-     */
-    public static String getSafeNameAgainstList(String base, List<String> list){
-        String trialName = base;
-        int index = 1;
-        while (list.contains(trialName)){
-            trialName = base + " (" + index +")";
-            index++;
-        }
-        return trialName;
-    }
-
-    public static String getSafeNameAgainstTreeItemList(String base, List<TreeItem<LocationTreeItemContent>> list){
-        if (base==null){
-            return null;
-        }
-        String trialName = base;
-        int index = 1;
-        while (containsString(list,trialName)){
-            trialName = base + " (" + index +")";
-            index++;
-        }
-        return trialName;
-    }
-
-    private static boolean containsString(List<TreeItem<LocationTreeItemContent>> list, @Nonnull String name){
-        for (TreeItem<LocationTreeItemContent> treeItem: list){
-            if (name.equals(treeItem.getValue().toString())){
-                return true;
-            }
-        }
-        return false;
-    }
 }
