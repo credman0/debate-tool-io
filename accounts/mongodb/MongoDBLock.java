@@ -6,6 +6,7 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
 import org.debatetool.io.accounts.DBLock;
 import org.bson.Document;
+import org.debatetool.io.accounts.DBLockResponse;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +29,7 @@ public class MongoDBLock implements DBLock {
     }
 
     @Override
-    public boolean tryLock(byte[] hash) {
+    public DBLockResponse tryLock(byte[] hash) {
         String username = mongoClient.getCredential().getUserName();
         Document setOnInsert = new Document();
         setOnInsert.put("time", new Date());
@@ -38,7 +39,11 @@ public class MongoDBLock implements DBLock {
         options.returnDocument(ReturnDocument.AFTER);
         options.upsert(true);
         Document document = collection.findOneAndUpdate(Filters.eq("Hash", hash), update, options);
-        return document.get("username").equals(username);
+        if (document.get("username").equals(username)){
+            return new DBLockResponse("", DBLockResponse.ResultType.SUCCESS);
+        }else{
+            return new DBLockResponse(username, DBLockResponse.ResultType.FAILURE_LOCKEDBY);
+        }
     }
 
     @Override
