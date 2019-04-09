@@ -4,11 +4,15 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.*;
+import org.bson.conversions.Bson;
 import org.debatetool.io.accounts.DBLock;
 import org.bson.Document;
 import org.debatetool.io.accounts.DBLockResponse;
+import org.debatetool.io.filters.Filter;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class MongoDBLock implements DBLock {
@@ -59,5 +63,15 @@ public class MongoDBLock implements DBLock {
     @Override
     public void unlockAllExcept(byte[] hash) {
         collection.deleteMany(Filters.and(Filters.eq("username", mongoClient.getCredential().getUserName()), Filters.not(Filters.eq("Hash", hash))));
+    }
+
+    @Override
+    public void unlockAllExcept(byte[]... hashes) {
+        List<Bson> excludeFiltersList = new ArrayList<>();
+        for (byte[] hash:hashes){
+            excludeFiltersList.add(Filters.eq("Hash", hash));
+        }
+        Bson excludeFilter = Filters.nor(excludeFiltersList);
+        collection.deleteMany(Filters.and(Filters.eq("username", mongoClient.getCredential().getUserName()), Filters.not(excludeFilter)));
     }
 }

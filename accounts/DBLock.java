@@ -5,4 +5,6 @@ public interface DBLock {
     void unlock(byte[] hash);
     void unlockAll();
     void unlockAllExcept(byte[] hash);
+
+    void unlockAllExcept(byte[]... hashes);
 }
