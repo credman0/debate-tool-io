@@ -82,9 +82,7 @@ public class MongoDBStructureIOManager implements StructureIOManager {
                 children.add(((List<String>)document.get("Path")).get(path.size()));
             }
         }
-
         return new ArrayList<>(children);
-
     }
 
     @Override
@@ -134,6 +132,23 @@ public class MongoDBStructureIOManager implements StructureIOManager {
         List<String> childPath = new ArrayList<>(path);
         childPath.add(name);
         collection.updateOne(Filters.eq("Path", childPath), Updates.set("Path", childPath), upsertOption);
+    }
+
+    @Override
+    public void removeNode(List<String> path) {
+        // generate a filter that will catch the path in the chosen directory as well as all subdirectories, to update all at once
+        ArrayList<Bson>pathFiltersList = new ArrayList<>(path.size());
+        for (int i = 0; i < path.size(); i++){
+            pathFiltersList.add(Filters.eq("Path."+i, path.get(i)));
+        }
+        Bson pathFilter = Filters.and(pathFiltersList);
+        collection.deleteMany(pathFilter);
+    }
+
+    @Override
+    public void removeContent(List<String> path, byte[] id) {
+        collection.updateOne(Filters.eq("Path", path), Updates.pull("Content", id), upsertOption);
+        // TODO clear states
     }
 
     @Override
