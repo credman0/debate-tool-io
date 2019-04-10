@@ -15,13 +15,7 @@ public interface StructureIOManager extends Closeable, AutoCloseable {
     List<String> getRoot();
     void addChild(List<String> path, String name);
 
-    void replaceContent(List<String> path, byte[] oldHash, byte[] newHash);
-
     void addContent(List<String> path, HashIdentifiedSpeechComponent component);
 
-    List<String> getBlockPath(byte[] hash);
-
     void renameDirectory(List<String> path, String name, String newName);
-
-    void getSafeChildRename(List<String> path, String base);
 }

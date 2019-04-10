@@ -122,13 +122,6 @@ public class MongoDBStructureIOManager implements StructureIOManager {
     }
 
     @Override
-    public void replaceContent(List<String> path, byte[] oldHash, byte[] newHash){
-        // TODO combine these statements
-        collection.updateOne(Filters.eq("Path", path), Updates.pull("Content",oldHash));
-        collection.updateOne(Filters.eq("Path", path), Updates.push("Content",newHash));
-    }
-
-    @Override
     public void addContent(List<String> path, HashIdentifiedSpeechComponent component) {
         List<WriteModel<Document>> bulkWrites = new ArrayList<>();
         Bson update = Updates.addToSet("Content", component.getHash());
@@ -141,19 +134,7 @@ public class MongoDBStructureIOManager implements StructureIOManager {
             bulkWrites.add(new UpdateOneModel<>(Filters.eq("Path", path), Updates.push("ContentState", new Document("Hash", component.getHash()).append("State", component.getStateString()))));
             //bulkWrites.add(new UpdateOneModel<>(Filters.eq("Path", path),Updates.set("ContentState.$[state].State", component.getStateString()), options));
         }
-        // TODO add checks against adding content before creating a tree element
         collection.bulkWrite(bulkWrites);
-    }
-
-    @Override
-    public List<String> getBlockPath(byte[] hash){
-        // TODO replace this search (or at least index it)
-        Document directoryDoc =  collection.find(Filters.in("Content", hash)).first();
-        if (directoryDoc==null){
-            return new ArrayList<>();
-        }else {
-            return (List<String>) directoryDoc.get("Path");
-        }
     }
 
     @Override
@@ -169,24 +150,7 @@ public class MongoDBStructureIOManager implements StructureIOManager {
         pathUpdateList.add(Updates.set("Path."+path.size(), newName));
         Bson pathFilter = Filters.and(pathFiltersList);
         Bson pathUpdate = Updates.combine(pathUpdateList);
-        // before changing the paths, we need to make sure to update the hashes of any components whose hash will change
-        // TODO try to reduce the number of transactions here
-        /*FindIterable<Document> changedDirectories = collection.find(pathFilter);
-        List<WriteModel<Document>> writes = new ArrayList<WriteModel<Document>>();
-        for (Document document:changedDirectories){
-            List<Bson> pipeline = new ArrayList<>();
-            List<Variable<Object>> let = new ArrayList<>();
-            pipeline.
-            UpdateOneModel update = new UpdateOneModel(document, Aggregates.lookup("SpeechComponents",);
-            writes.add(update);
-        }*/
-        // find documents that are prefixed with every element of the path and replace those path elements
         collection.updateMany(pathFilter,pathUpdate);
-    }
-
-    @Override
-    public void getSafeChildRename(List<String> path, String base) {
-        throw new UnsupportedOperationException("Safe child rename not implemented");
     }
 
     @Override
