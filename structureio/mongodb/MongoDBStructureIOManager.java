@@ -116,12 +116,9 @@ public class MongoDBStructureIOManager implements StructureIOManager {
 
     @Override
     public void addChild(List<String> path, String name) {
-        Document child = new Document();
-        // TODO adding then removing not thread safe/generally ugly
-        path.add(name);
-        child.put("Path", path);
-        collection.insertOne(child);
-        path.remove(path.size()-1);
+        List<String> childPath = new ArrayList<>(path);
+        childPath.add(name);
+        collection.updateOne(Filters.eq("Path", childPath), Updates.set("Path", childPath), upsertOption);
     }
 
     @Override

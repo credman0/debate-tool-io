@@ -29,10 +29,14 @@ public class MongoDBIOController implements IOController {
     @Override
     public boolean attemptAuthenticate(String address, int port, String username, String password) {
         try {
-            MongoCredential credential = MongoCredential.createCredential(username,
-                    "UDT",
-                    password.toCharArray());
-            mongoClient = new MongoClient(new ServerAddress(address,port), credential, MongoClientOptions.builder().build());
+            if (username == null || password==null){
+                mongoClient = new MongoClient(new ServerAddress(address,port));
+            }else{
+                MongoCredential credential = MongoCredential.createCredential(username,
+                        "UDT",
+                        password.toCharArray());
+                mongoClient = new MongoClient(new ServerAddress(address,port), credential, MongoClientOptions.builder().build());
+            }
             // setup if the database authenticated properly
             componentIOManager = new MongoDBComponentIOManager(mongoClient);
             structureIOManager = new MongoDBStructureIOManager(mongoClient);
