@@ -93,7 +93,7 @@ public class FileSystemStructureIOManager implements StructureIOManager {
         if (!folderPath.toFile().isDirectory()){
             throw new IllegalArgumentException("Deletion argument is a file");
         }
-        folderPath.toFile().delete();
+        IOUtil.deleteDir(folderPath.toFile());
     }
 
     @Override
@@ -112,6 +112,7 @@ public class FileSystemStructureIOManager implements StructureIOManager {
     @Override
     public void removeContent(List<String> path, byte[] id) {
         Path contentPath = Paths.get(root.toString(), path.stream().toArray(String[]::new));
+        contentPath = Paths.get(contentPath.toString(), IOUtil.encodeString(id));
         if (contentPath.toFile().isDirectory()){
             throw new IllegalArgumentException("Deletion argument is a folder");
         }
