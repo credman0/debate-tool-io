@@ -23,6 +23,8 @@ import org.debatetool.io.overlayio.OverlayIOManager;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -59,9 +61,12 @@ public class FileSystemOverlayIOManager implements OverlayIOManager {
     @Override
     public void saveOverlays(byte[] cardHash, List<CardOverlay> overlays, String type) {
         String hashEncoded = IOUtil.encodeString(cardHash);
+        Path folderPath = Paths.get(root.toString(), hashEncoded);
+        folderPath.toFile().mkdir();
         Path componentPath = Paths.get(root.toString(), hashEncoded,type);
         try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(componentPath.toFile()))){
-            out.writeObject(overlays);
+            // List isnt always serializable, so we convert to something that is
+            out.writeObject(new ArrayList<>(overlays));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {

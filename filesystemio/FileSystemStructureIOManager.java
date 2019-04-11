@@ -89,7 +89,7 @@ public class FileSystemStructureIOManager implements StructureIOManager {
 
     @Override
     public void removeNode(List<String> path) {
-        Path folderPath = Paths.get(root.toString(), (String[]) path.toArray());
+        Path folderPath = Paths.get(root.toString(), path.stream().toArray(String[]::new));
         if (!folderPath.toFile().isDirectory()){
             throw new IllegalArgumentException("Deletion argument is a file");
         }
