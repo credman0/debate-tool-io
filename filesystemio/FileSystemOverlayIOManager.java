@@ -17,15 +17,16 @@ package org.debatetool.io.filesystemio;
 
 import org.bson.types.Binary;
 import org.debatetool.core.CardOverlay;
+import org.debatetool.io.IOUtil;
 import org.debatetool.io.overlayio.OverlayIOManager;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 
 public class FileSystemOverlayIOManager implements OverlayIOManager {
-
     Path root;
     public FileSystemOverlayIOManager(Path root) throws IOException {
         this.root = root;
@@ -33,21 +34,51 @@ public class FileSystemOverlayIOManager implements OverlayIOManager {
 
     @Override
     public HashMap<String, List<CardOverlay>> getOverlays(byte[] cardHash) {
-        return null;
+        String hashEncoded = IOUtil.encodeString(cardHash);
+        Path componentDirPath = Paths.get(root.toString(), hashEncoded);
+        File[] overlayFiles = componentDirPath.toFile().listFiles();
+        HashMap<String, List<CardOverlay>> overlays = new HashMap<>();
+        if (overlayFiles == null){
+            return overlays;
+        }
+        for (File file : overlayFiles){
+            try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(file))){
+                List<CardOverlay> overlayList = (List<CardOverlay>) in.readObject();
+                overlays.put(file.getName(), overlayList);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        return overlays;
     }
 
     @Override
     public void saveOverlays(byte[] cardHash, List<CardOverlay> overlays, String type) {
-
+        String hashEncoded = IOUtil.encodeString(cardHash);
+        Path componentPath = Paths.get(root.toString(), hashEncoded,type);
+        try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(componentPath.toFile()))){
+            out.writeObject(overlays);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public HashMap<Binary, HashMap<String, List<CardOverlay>>> getAllOverlays(List<byte[]> cardHashes) {
-        return null;
+        HashMap<Binary, HashMap<String, List<CardOverlay>>> allOverlays = new HashMap<>();
+        for (byte[]cardHash:cardHashes){
+            allOverlays.put(new Binary(cardHash), getOverlays(cardHash));
+        }
+        return allOverlays;
     }
 
     @Override
     public void close() throws IOException {
-
     }
 }

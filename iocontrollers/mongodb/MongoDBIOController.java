@@ -31,7 +31,7 @@ import org.debatetool.io.structureio.StructureIOManager;
 import org.debatetool.io.structureio.mongodb.MongoDBStructureIOManager;
 import java.io.IOException;
 
-public class MongoDBIOController implements IOController {
+public class MongoDBIOController extends IOController {
     private MongoClient mongoClient;
     private ComponentIOManager componentIOManager;
     private StructureIOManager structureIOManager;

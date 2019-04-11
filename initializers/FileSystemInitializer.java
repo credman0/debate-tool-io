@@ -15,5 +15,12 @@
 
 package org.debatetool.io.initializers;
 
+import java.nio.file.Path;
+
 public class FileSystemInitializer implements IOInitializer {
+    public final Path root;
+
+    public FileSystemInitializer(Path root) {
+        this.root = root;
+    }
 }

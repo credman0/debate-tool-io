@@ -176,11 +176,11 @@ public class IOUtil {
     }
 
     public static byte[] decodeString(String src){
-        return Base64.getDecoder().decode(src);
+        return Base64.getDecoder().decode(src.replaceAll("-", "+").replaceAll("_", "/"));
     }
 
     public static String encodeString(byte[] src){
-        return Base64.getEncoder().encodeToString(src);
+        return Base64.getEncoder().encodeToString(src).replaceAll("\\+", "-").replaceAll("/", "_");
     }
 
 }

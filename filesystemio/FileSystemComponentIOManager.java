@@ -31,14 +31,9 @@ import java.util.List;
 import java.util.Properties;
 
 public class FileSystemComponentIOManager implements ComponentIOManager {
-    Path root;
     Path componentDir;
-    public FileSystemComponentIOManager(Path root) throws IOException {
-        this.root = root;
-        componentDir = Paths.get(root.toString(), "components");
-        if (!componentDir.toFile().exists()){
-            componentDir.toFile().mkdir();
-        }
+    public FileSystemComponentIOManager(Path componentDir) throws IOException {
+        this.componentDir = componentDir;
     }
 
     @Override
@@ -72,7 +67,7 @@ public class FileSystemComponentIOManager implements ComponentIOManager {
         Path componentPath = Paths.get(componentDir.toString(), hashEncoded);
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(componentPath.toFile()))){
             List<String>[] labelledLists = speechComponent.toLabelledLists();
-            FileSystemDocument document = new FileSystemDocument(speechComponent.getClass().toString(), labelledLists[0], labelledLists[1], speechComponent.getHash());
+            FileSystemDocument document = new FileSystemDocument(speechComponent.getClass().getName(), labelledLists[0], labelledLists[1], speechComponent.getHash());
             out.writeObject(document);
         }
     }
@@ -128,7 +123,6 @@ public class FileSystemComponentIOManager implements ComponentIOManager {
     }
 
     private void loadCards(List<byte[]> cardHashes, List<Card> cards) throws IOException {
-        // TODO combine this into one request
         HashMap<Binary, HashIdentifiedSpeechComponent> loadedComponents = retrieveSpeechComponents(cardHashes);
         HashMap<Binary, HashMap<String, List<CardOverlay>>> allOverlays = IOController.getIoController().getOverlayIOManager().getAllOverlays(cardHashes);
         for (Card cardToLoad:cards){

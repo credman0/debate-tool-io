@@ -45,14 +45,14 @@ public class FileSystemStructureIOManager implements StructureIOManager {
 
     @Override
     public List<String> getChildren(List<String> path, boolean filtered) {
-        Path folderPath = Paths.get(root.toString(), (String[]) path.toArray());
+        Path folderPath = Paths.get(root.toString(), path.stream().toArray(String[]::new));
         String[] childrenArr = folderPath.toFile().list((current, name) -> new File(current, name).isDirectory());
         return Arrays.asList(childrenArr);
     }
 
     @Override
     public List<HashIdentifiedSpeechComponent> getContent(List<String> path) throws IOException {
-        Path folderPath = Paths.get(root.toString(), (String[]) path.toArray());
+        Path folderPath = Paths.get(root.toString(), path.stream().toArray(String[]::new));
         File[] contentFiles = folderPath.toFile().listFiles((current, name) -> !(new File(current, name).isDirectory()));
         List<byte[]> byteList = new ArrayList<>(contentFiles.length);
         for (File contentFile:contentFiles){
@@ -83,7 +83,7 @@ public class FileSystemStructureIOManager implements StructureIOManager {
     public void addChild(List<String> path, String name) {
         List<String> fullpath = new ArrayList<>(path);
         fullpath.add(name);
-        Path contentPath = Paths.get(root.toString(), (String[]) fullpath.toArray());
+        Path contentPath = Paths.get(root.toString(), fullpath.stream().toArray(String[]::new));
         contentPath.toFile().mkdir();
     }
 
@@ -100,7 +100,7 @@ public class FileSystemStructureIOManager implements StructureIOManager {
     public void addContent(List<String> path, HashIdentifiedSpeechComponent component) throws IOException {
         List<String> fullpath = new ArrayList<>(path);
         fullpath.add(IOUtil.encodeString(component.getHash()));
-        Path contentPath = Paths.get(root.toString(), (String[]) fullpath.toArray());
+        Path contentPath = Paths.get(root.toString(), fullpath.stream().toArray(String[]::new));
         contentPath.toFile().createNewFile();
         if (component instanceof StateRecoverableComponent) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(contentPath.toFile()))) {
@@ -111,7 +111,7 @@ public class FileSystemStructureIOManager implements StructureIOManager {
 
     @Override
     public void removeContent(List<String> path, byte[] id) {
-        Path contentPath = Paths.get(root.toString(), (String[]) path.toArray());
+        Path contentPath = Paths.get(root.toString(), path.stream().toArray(String[]::new));
         if (contentPath.toFile().isDirectory()){
             throw new IllegalArgumentException("Deletion argument is a folder");
         }
@@ -122,13 +122,13 @@ public class FileSystemStructureIOManager implements StructureIOManager {
     public void renameDirectory(List<String> path, String name, String newName) {
         List<String> fullpath = new ArrayList<>(path);
         fullpath.add(name);
-        Path folderPath = Paths.get(root.toString(), (String[]) fullpath.toArray());
+        Path folderPath = Paths.get(root.toString(), fullpath.stream().toArray(String[]::new));
         if (!folderPath.toFile().isDirectory()){
             throw new IllegalArgumentException("Rename argument is a file");
         }
         List<String> newListPath = new ArrayList<>(path);
         newListPath.add(newName);
-        Path newPath = Paths.get(root.toString(), (String[]) newListPath.toArray());
+        Path newPath = Paths.get(root.toString(), newListPath.stream().toArray(String[]::new));
         folderPath.toFile().renameTo(newPath.toFile());
     }
 

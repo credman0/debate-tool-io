@@ -15,7 +15,7 @@
 
 package org.debatetool.io.initializers;
 
-public class DatabaseInitializer {
+public class DatabaseInitializer implements IOInitializer{
     final public String address;
     final public int port;
     final public String username;

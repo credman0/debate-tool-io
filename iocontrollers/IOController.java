@@ -24,20 +24,24 @@ import org.debatetool.io.overlayio.OverlayIOManager;
 import org.debatetool.io.structureio.StructureIOManager;
 
 import java.io.Closeable;
+import java.io.IOException;
 
-public interface IOController extends Closeable, AutoCloseable {
-    IOController ioController = new MongoDBIOController();
-    static IOController getIoController(){
+public abstract class IOController implements Closeable, AutoCloseable {
+    private static IOController ioController = null;
+    public static void setIoController(IOController controller){
+        ioController = controller;
+    }
+    public static IOController getIoController(){
         return ioController;
     }
 
-    boolean attemptInitialize(IOInitializer initializer);
+    public abstract boolean attemptInitialize(IOInitializer initializer) throws IOException;
 
-    ComponentIOManager getComponentIOManager();
-    StructureIOManager getStructureIOManager();
-    OverlayIOManager getOverlayIOManager();
+    public abstract ComponentIOManager getComponentIOManager();
+    public abstract StructureIOManager getStructureIOManager();
+    public abstract OverlayIOManager getOverlayIOManager();
 
-    AdminManager getAdminManager();
+    public abstract AdminManager getAdminManager();
 
-    DBLock getDBLock();
+    public abstract DBLock getDBLock();
 }
