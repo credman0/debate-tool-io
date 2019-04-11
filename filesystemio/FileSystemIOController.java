@@ -13,31 +13,58 @@
  *                                Copyright (c) 2019 Colin Redman
  */
 
-package org.debatetool.io.iocontrollers;
+package org.debatetool.io.filesystemio;
 
 import org.debatetool.io.accounts.AdminManager;
 import org.debatetool.io.accounts.DBLock;
 import org.debatetool.io.componentio.ComponentIOManager;
+import org.debatetool.io.initializers.FileSystemInitializer;
 import org.debatetool.io.initializers.IOInitializer;
-import org.debatetool.io.iocontrollers.mongodb.MongoDBIOController;
+import org.debatetool.io.iocontrollers.IOController;
 import org.debatetool.io.overlayio.OverlayIOManager;
 import org.debatetool.io.structureio.StructureIOManager;
 
-import java.io.Closeable;
+import java.io.IOException;
 
-public interface IOController extends Closeable, AutoCloseable {
-    IOController ioController = new MongoDBIOController();
-    static IOController getIoController(){
-        return ioController;
+public class FileSystemIOController implements IOController {
+
+
+    @Override
+    public boolean attemptInitialize(IOInitializer initializer) {
+        if (!(initializer instanceof FileSystemInitializer)){
+            throw new IllegalArgumentException("Incorrect initializer type");
+        }
+
+        return false;
     }
 
-    boolean attemptInitialize(IOInitializer initializer);
+    @Override
+    public ComponentIOManager getComponentIOManager() {
+        return null;
+    }
 
-    ComponentIOManager getComponentIOManager();
-    StructureIOManager getStructureIOManager();
-    OverlayIOManager getOverlayIOManager();
+    @Override
+    public StructureIOManager getStructureIOManager() {
+        return null;
+    }
 
-    AdminManager getAdminManager();
+    @Override
+    public OverlayIOManager getOverlayIOManager() {
+        return null;
+    }
 
-    DBLock getDBLock();
+    @Override
+    public AdminManager getAdminManager() {
+        return null;
+    }
+
+    @Override
+    public DBLock getDBLock() {
+        return null;
+    }
+
+    @Override
+    public void close() throws IOException {
+
+    }
 }

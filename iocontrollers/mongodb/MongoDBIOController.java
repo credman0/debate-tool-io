@@ -22,6 +22,8 @@ import org.debatetool.io.accounts.mongodb.MongoDBAdminManager;
 import org.debatetool.io.accounts.mongodb.MongoDBLock;
 import org.debatetool.io.componentio.ComponentIOManager;
 import org.debatetool.io.componentio.mongodb.MongoDBComponentIOManager;
+import org.debatetool.io.initializers.DatabaseInitializer;
+import org.debatetool.io.initializers.IOInitializer;
 import org.debatetool.io.iocontrollers.IOController;
 import org.debatetool.io.overlayio.OverlayIOManager;
 import org.debatetool.io.overlayio.mongodb.MongoDBOverlayIOManager;
@@ -42,7 +44,14 @@ public class MongoDBIOController implements IOController {
     }
 
     @Override
-    public boolean attemptAuthenticate(String address, int port, String username, String password) {
+    public boolean attemptInitialize(IOInitializer initializer) {
+        if (!(initializer instanceof DatabaseInitializer)){
+            throw new IllegalArgumentException("Incorrect initializer type");
+        }
+        String address = ((DatabaseInitializer) initializer).address;
+        int port = ((DatabaseInitializer) initializer).port;
+        String username = ((DatabaseInitializer) initializer).username;
+        String password = ((DatabaseInitializer) initializer).password;
         try {
             if (username == null || password==null){
                 mongoClient = new MongoClient(new ServerAddress(address,port));

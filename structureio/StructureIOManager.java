@@ -18,6 +18,7 @@ package org.debatetool.io.structureio;
 import org.debatetool.core.HashIdentifiedSpeechComponent;
 
 import java.io.Closeable;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface StructureIOManager extends Closeable, AutoCloseable {
      */
     void removeNode(List<String> path);
 
-    void addContent(List<String> path, HashIdentifiedSpeechComponent component);
+    void addContent(List<String> path, HashIdentifiedSpeechComponent component) throws IOException;
     void removeContent(List<String> path, byte[] id);
 
     void renameDirectory(List<String> path, String name, String newName);

@@ -13,31 +13,41 @@
  *                                Copyright (c) 2019 Colin Redman
  */
 
-package org.debatetool.io.iocontrollers;
+package org.debatetool.io.filesystemio;
 
-import org.debatetool.io.accounts.AdminManager;
-import org.debatetool.io.accounts.DBLock;
-import org.debatetool.io.componentio.ComponentIOManager;
-import org.debatetool.io.initializers.IOInitializer;
-import org.debatetool.io.iocontrollers.mongodb.MongoDBIOController;
+import org.bson.types.Binary;
+import org.debatetool.core.CardOverlay;
 import org.debatetool.io.overlayio.OverlayIOManager;
-import org.debatetool.io.structureio.StructureIOManager;
 
-import java.io.Closeable;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.List;
 
-public interface IOController extends Closeable, AutoCloseable {
-    IOController ioController = new MongoDBIOController();
-    static IOController getIoController(){
-        return ioController;
+public class FileSystemOverlayIOManager implements OverlayIOManager {
+
+    Path root;
+    public FileSystemOverlayIOManager(Path root) throws IOException {
+        this.root = root;
     }
 
-    boolean attemptInitialize(IOInitializer initializer);
+    @Override
+    public HashMap<String, List<CardOverlay>> getOverlays(byte[] cardHash) {
+        return null;
+    }
 
-    ComponentIOManager getComponentIOManager();
-    StructureIOManager getStructureIOManager();
-    OverlayIOManager getOverlayIOManager();
+    @Override
+    public void saveOverlays(byte[] cardHash, List<CardOverlay> overlays, String type) {
 
-    AdminManager getAdminManager();
+    }
 
-    DBLock getDBLock();
+    @Override
+    public HashMap<Binary, HashMap<String, List<CardOverlay>>> getAllOverlays(List<byte[]> cardHashes) {
+        return null;
+    }
+
+    @Override
+    public void close() throws IOException {
+
+    }
 }

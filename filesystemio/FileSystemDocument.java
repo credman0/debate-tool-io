@@ -13,31 +13,21 @@
  *                                Copyright (c) 2019 Colin Redman
  */
 
-package org.debatetool.io.iocontrollers;
+package org.debatetool.io.filesystemio;
 
-import org.debatetool.io.accounts.AdminManager;
-import org.debatetool.io.accounts.DBLock;
-import org.debatetool.io.componentio.ComponentIOManager;
-import org.debatetool.io.initializers.IOInitializer;
-import org.debatetool.io.iocontrollers.mongodb.MongoDBIOController;
-import org.debatetool.io.overlayio.OverlayIOManager;
-import org.debatetool.io.structureio.StructureIOManager;
+import java.io.Serializable;
+import java.util.List;
 
-import java.io.Closeable;
+public class FileSystemDocument implements Serializable {
+    final String type;
+    final List<String> labels;
+    final List<String> values;
+    final byte[] hash;
 
-public interface IOController extends Closeable, AutoCloseable {
-    IOController ioController = new MongoDBIOController();
-    static IOController getIoController(){
-        return ioController;
+    public FileSystemDocument(String type, List<String> labels, List<String> values, byte[] hash) {
+        this.type = type;
+        this.labels = labels;
+        this.values = values;
+        this.hash = hash;
     }
-
-    boolean attemptInitialize(IOInitializer initializer);
-
-    ComponentIOManager getComponentIOManager();
-    StructureIOManager getStructureIOManager();
-    OverlayIOManager getOverlayIOManager();
-
-    AdminManager getAdminManager();
-
-    DBLock getDBLock();
 }

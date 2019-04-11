@@ -13,31 +13,18 @@
  *                                Copyright (c) 2019 Colin Redman
  */
 
-package org.debatetool.io.iocontrollers;
+package org.debatetool.io.initializers;
 
-import org.debatetool.io.accounts.AdminManager;
-import org.debatetool.io.accounts.DBLock;
-import org.debatetool.io.componentio.ComponentIOManager;
-import org.debatetool.io.initializers.IOInitializer;
-import org.debatetool.io.iocontrollers.mongodb.MongoDBIOController;
-import org.debatetool.io.overlayio.OverlayIOManager;
-import org.debatetool.io.structureio.StructureIOManager;
+public class DatabaseInitializer {
+    final public String address;
+    final public int port;
+    final public String username;
+    final public String password;
 
-import java.io.Closeable;
-
-public interface IOController extends Closeable, AutoCloseable {
-    IOController ioController = new MongoDBIOController();
-    static IOController getIoController(){
-        return ioController;
+    public DatabaseInitializer(String address, int port, String username, String password) {
+        this.address = address;
+        this.port = port;
+        this.username = username;
+        this.password = password;
     }
-
-    boolean attemptInitialize(IOInitializer initializer);
-
-    ComponentIOManager getComponentIOManager();
-    StructureIOManager getStructureIOManager();
-    OverlayIOManager getOverlayIOManager();
-
-    AdminManager getAdminManager();
-
-    DBLock getDBLock();
 }
